@@ -2,7 +2,7 @@ import serial
 import numpy as np
 import matplotlib.pylab as plt
 
-ser = serial.Serial('COM4', 115200)
+ser = serial.Serial('COM10', 115200)
 
 times = 0
 itration = 60000
@@ -27,33 +27,34 @@ while times < itration:
         rawFrame += byte
         if rawFrame[-2:]==[13, 10]:
             if len(rawFrame) == 15:
-                receiver_id = rawFrame[0]
-                #print('receiver_id:',receiver_id)
-                decimal_data = int.from_bytes(rawFrame[1:5],byteorder='big')
-                #print('RTT time:',decimal_data)
-                response_rssi = bytes(rawFrame[5:9])
-                response_rssi = int(response_rssi.decode('utf-8'))
-                #print('response rssi:',response_rssi)
-                request_rssi = bytes(rawFrame[9:13])
-                request_rssi = int(request_rssi.decode('utf-8'))
-                #print('request rssi:',request_rssi)
-                #print('-------------------------------')
-                times = times + 1
-                if receiver_id == 1:
-                    anchor1_rtt_list.append(decimal_data)
-                    anchor1_response_list.append(response_rssi)
-                    anchor1_request_list.append(request_rssi)
-                elif receiver_id == 2:
-                    anchor2_rtt_list.append(decimal_data)
-                    anchor2_response_list.append(response_rssi)
-                    anchor2_request_list.append(request_rssi)
-                elif receiver_id == 3:
-                    anchor3_rtt_list.append(decimal_data)
-                    anchor3_response_list.append(response_rssi)
-                    anchor3_request_list.append(request_rssi)
-                print(times)
-
-                     
+                try:
+                    receiver_id = rawFrame[0]
+                    #print('receiver_id:',receiver_id)
+                    decimal_data = int.from_bytes(rawFrame[1:5],byteorder='big')
+                    #print('RTT time:',decimal_data)
+                    response_rssi = bytes(rawFrame[5:9])
+                    response_rssi = int(response_rssi.decode('utf-8'))
+                    #print('response rssi:',response_rssi)
+                    request_rssi = bytes(rawFrame[9:13])
+                    request_rssi = int(request_rssi.decode('utf-8'))
+                    #print('request rssi:',request_rssi)
+                    #print('-------------------------------')
+                    times = times + 1
+                    if receiver_id == 1:
+                        anchor1_rtt_list.append(decimal_data)
+                        anchor1_response_list.append(response_rssi)
+                        anchor1_request_list.append(request_rssi)
+                    elif receiver_id == 2:
+                        anchor2_rtt_list.append(decimal_data)
+                        anchor2_response_list.append(response_rssi)
+                        anchor2_request_list.append(request_rssi)
+                    elif receiver_id == 3:
+                        anchor3_rtt_list.append(decimal_data)
+                        anchor3_response_list.append(response_rssi)
+                        anchor3_request_list.append(request_rssi)
+                    print(times)
+                except:
+                     rawFrame = []
             rawFrame = []
 
 
@@ -97,6 +98,6 @@ anchor3_rtt_array = np.array(anchor3_rtt_list)
 anchor3_response_array = np.array(anchor3_response_list)
 anchor3_request_array = np.array(anchor3_request_list)
 
-np.savez('fingerprint_experiment1/distance0.npz', anchor1_rtt=anchor1_rtt_array, anchor1_response=anchor1_response_array, anchor1_request=anchor1_request_array,
+np.savez('fingerprint_experiment1/distance10.npz', anchor1_rtt=anchor1_rtt_array, anchor1_response=anchor1_response_array, anchor1_request=anchor1_request_array,
                     anchor2_rtt=anchor2_rtt_array, anchor2_response=anchor2_response_array, anchor2_request=anchor2_request_array,
                     anchor3_rtt=anchor3_rtt_array, anchor3_response=anchor3_response_array, anchor3_request=anchor3_request_array)
