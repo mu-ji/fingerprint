@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-data = np.load('fingerprint_experiment1/distance7.npz')
+data = np.load('fingerprint_experiment1/distance10.npz')
 anchor1_rtt_list = data['anchor1_rtt']
 anchor1_response_list = data['anchor1_response']
 anchor1_request_list = data['anchor1_request']
