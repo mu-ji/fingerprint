@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-data = np.load('fingerprint_experiment1/distance10.npz')
+data = np.load('fingerprint_experiment1/distance8.npz')
 anchor1_rtt_list = data['anchor1_rtt']
 anchor1_response_list = data['anchor1_response']
 anchor1_request_list = data['anchor1_request']
@@ -38,3 +38,20 @@ ax3.legend()
 ax3.grid()
 
 plt.show()
+
+signal = anchor1_request_list[5000:7500]
+spectrum = np.fft.fft(signal)
+
+# 计算频率轴
+N = len(signal)  # 信号长度
+freq = np.fft.fftfreq(N)
+
+plt.figure(figsize=(8, 4))
+plt.plot(freq[N//2:], np.abs(spectrum[N//2:]))
+plt.xlabel('频率 (Hz)')
+plt.ylabel('幅度')
+plt.title('信号的频谱')
+plt.grid(True)
+plt.show()
+
+

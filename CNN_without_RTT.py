@@ -17,36 +17,43 @@ features = array[:, :1200]
 print(features)
 Y_labels = array[:,1200]
 # 将特征重塑为（6 * 200）
-reshaped_features = features.reshape(220, 6, 200)
-
-# 打印重塑后的特征形状
-print(reshaped_features[1])
-print(Y_labels[1])
+reshaped_features = features.reshape(440, 6, 200)
+reshaped_features = reshaped_features.reshape(440, 6, 10, 20)
 
 
 class CNN(nn.Module):
     def __init__(self):
         super(CNN, self).__init__()
         
-        # 定义卷积层
-        self.conv1 = nn.Conv2d(in_channels=1, out_channels=16, kernel_size=(3, 3))
-        self.relu = nn.ReLU()
+        self.conv1 = nn.Conv2d(in_channels=6, out_channels=16, kernel_size=(3, 3), stride=1, padding=1)
+        self.relu1 = nn.ReLU()
         
-        # 定义池化层
-        self.pool = nn.MaxPool2d(kernel_size=(2, 2))
+        self.conv2 = nn.Conv2d(in_channels=16, out_channels=32, kernel_size=(3, 3), stride=1, padding=1)
+        self.relu2 = nn.ReLU()
+        self.pool = nn.MaxPool2d(kernel_size=(2, 2), stride=2)
         
-        # 定义全连接层
-        self.fc1 = nn.Linear(16 * 2 * 99, 128)  
-        self.fc2 = nn.Linear(128, 10)  # 最终输出10个特征
+        self.conv3 = nn.Conv2d(in_channels=32, out_channels=64, kernel_size=(3, 3), stride=1, padding=1)
+        self.relu3 = nn.ReLU()
         
+        self.fc1 = nn.Linear(64 * 5 * 10, 256)
+        self.relu4 = nn.ReLU()
+        self.fc2 = nn.Linear(256, 10)
+
     def forward(self, x):
         x = self.conv1(x)
-        x = self.relu(x)
+        x = self.relu1(x)
+        
+        x = self.conv2(x)
+        x = self.relu2(x)
         x = self.pool(x)
         
-        x = x.view(x.size(0), -1)  # 展开为一维向量
+        x = self.conv3(x)
+        x = self.relu3(x)
+        
+        x = x.view(x.size(0), -1)
+        
         x = self.fc1(x)
-        x = self.relu(x)
+        x = self.relu4(x)
         x = self.fc2(x)
         
         return x
@@ -58,7 +65,7 @@ model = CNN()
 model.eval()
 
 tensor_data = torch.tensor(reshaped_features, dtype=torch.float32)
-tensor_data = tensor_data.unsqueeze(1)
+#tensor_data = tensor_data.unsqueeze(1)
 features = model(tensor_data)
 
 print(features)
@@ -89,7 +96,7 @@ optimizer = optim.SGD(NN_model.parameters(), lr=0.01)
 
 
 features = torch.tensor(features, dtype=torch.float32)
-Y = torch.tensor(Y_labels.reshape(220,1), dtype=torch.float32)
+Y = torch.tensor(Y_labels.reshape(440,1), dtype=torch.float32)
 for epoch in range(2000):
     # 前向传播
     outputs = NN_model(features)
@@ -110,8 +117,9 @@ test_data = np.load('test_set/test_set_without_rtt.npy')
 X = test_data[:, :1200]
 Y = test_data[:,1200]
 X = X.reshape(110, 6, 200)
+X = X.reshape(110, 6, 10, 20)
 test_data_tensor = torch.tensor(X, dtype=torch.float32)
-test_data_tensor = test_data_tensor.unsqueeze(1)
+#test_data_tensor = test_data_tensor.unsqueeze(1)
 features = model(test_data_tensor)
 
 with torch.no_grad():

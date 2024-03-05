@@ -56,6 +56,6 @@ def generate_training_set(sample_number,sample_length):
     train_set_with_rtt = train_set_with_rtt[1:,:]
     return train_set_without_rtt,train_set_with_rtt
 
-train_set_without_rtt,train_set_with_rtt = generate_training_set(20,200)
+train_set_without_rtt,train_set_with_rtt = generate_training_set(40,200)
 np.save('train_set/train_set_without_rtt.npy',train_set_without_rtt)
 np.save('train_set/train_set_with_rtt.npy',train_set_with_rtt)

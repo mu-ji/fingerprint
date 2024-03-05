@@ -20,7 +20,7 @@ features[:,1200:1400] -= 20070
 print(features)
 Y_labels = array[:,1800]
 # 将特征重塑为（6 * 200）
-reshaped_features = features.reshape(220, 9, 200)
+reshaped_features = features.reshape(440, 9, 200)
 
 # 打印重塑后的特征形状
 print(reshaped_features[1])
@@ -92,7 +92,7 @@ optimizer = optim.SGD(NN_model.parameters(), lr=0.01)
 
 
 features = torch.tensor(features, dtype=torch.float32)
-Y = torch.tensor(Y_labels.reshape(220,1), dtype=torch.float32)
+Y = torch.tensor(Y_labels.reshape(440,1), dtype=torch.float32)
 for epoch in range(2000):
     # 前向传播
     outputs = NN_model(features)
