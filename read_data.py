@@ -1,7 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy import fft, ifft
 
-data = np.load('fingerprint_experiment1/distance8.npz')
+data = np.load('fingerprint_experiment1/distance5.npz')
 anchor1_rtt_list = data['anchor1_rtt']
 anchor1_response_list = data['anchor1_response']
 anchor1_request_list = data['anchor1_request']
@@ -39,19 +40,43 @@ ax3.grid()
 
 plt.show()
 
-signal = anchor1_request_list[5000:7500]
-spectrum = np.fft.fft(signal)
+signal = anchor1_response_list
+train_signal = signal[:10000]
+test_signal = signal[10000:]
+# 对原始信号进行傅里叶变换
+train_spectrum = np.fft.fft(train_signal)
+test_spectrum = np.fft.fft(test_signal)
+# 计算频谱的能量
+train_energy = np.abs(train_spectrum) ** 2
+test_energy = np.abs(test_spectrum) ** 2
 
-# 计算频率轴
-N = len(signal)  # 信号长度
-freq = np.fft.fftfreq(N)
+# 计算整体能量的5%阈值
+coeff = 0.05
+train_threshold = coeff * np.sum(train_energy)
+test_threshold = coeff * np.sum(test_energy)
 
-plt.figure(figsize=(8, 4))
-plt.plot(freq[N//2:], np.abs(spectrum[N//2:]))
-plt.xlabel('频率 (Hz)')
-plt.ylabel('幅度')
-plt.title('信号的频谱')
-plt.grid(True)
+# 复制频谱，并将低于阈值的频率成分设为零
+train_truncated_spectrum = train_spectrum.copy()
+train_truncated_spectrum[train_energy < train_threshold] = 0
+train_truncated_signal = np.real(np.fft.ifft(train_truncated_spectrum))
+
+test_truncated_spectrum = test_spectrum.copy()
+test_truncated_spectrum[test_energy < test_threshold] = 0
+test_truncated_signal = np.real(np.fft.ifft(test_truncated_spectrum))
+# 绘制滤波前后的时域信号
+plt.figure(figsize=(12, 4))
+plt.subplot(2, 2, 1)
+plt.plot(train_signal)
+plt.title('origial training signal')
+plt.subplot(2, 2, 2)
+plt.plot(train_truncated_signal)
+plt.title('recover training signal')
+plt.subplot(2, 2, 3)
+plt.plot(test_signal)
+plt.title('origial test signal')
+plt.subplot(2, 2, 4)
+plt.plot(test_truncated_signal)
+plt.title('recover test signal')
+plt.gca().ticklabel_format(style='plain', useOffset=False)
 plt.show()
-
 

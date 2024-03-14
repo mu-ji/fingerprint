@@ -54,6 +54,6 @@ def generate_test_set(sample_number,sample_length):
     test_set_with_rtt = test_set_with_rtt[1:,:]
     return test_set_without_rtt,test_set_with_rtt
 
-test_set_without_rtt,test_set_with_rtt = generate_test_set(10,200)
-np.save('test_set/test_set_without_rtt.npy',test_set_without_rtt)
-np.save('test_set/test_set_with_rtt.npy',test_set_with_rtt)
+test_set_without_rtt,test_set_with_rtt = generate_test_set(10,50)
+np.save('test_set/test_set_without_rtt_50.npy',test_set_without_rtt)
+np.save('test_set/test_set_with_rtt_50.npy',test_set_with_rtt)
