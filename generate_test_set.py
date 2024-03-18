@@ -6,19 +6,28 @@ distance_list = [i for i in range(11)]
 def distance_sample(distance,sample_number,sample_length):
     data = np.load('fingerprint_experiment1/distance{}.npz'.format(distance))
     anchor1_rtt_array = data['anchor1_rtt']
+    for i in range(len(anchor1_rtt_array)):
+        if anchor1_rtt_array[i] > 21000 or anchor1_rtt_array[i] < 20000:
+            anchor1_rtt_array[i] = anchor1_rtt_array[i-1]
     anchor1_response_array = data['anchor1_response']
     anchor1_request_array = data['anchor1_request']
     anchor2_rtt_array = data['anchor2_rtt']
+    for i in range(len(anchor2_rtt_array)):
+        if anchor2_rtt_array[i] > 21000 or anchor2_rtt_array[i] < 20000:
+            anchor2_rtt_array[i] = anchor2_rtt_array[i-1]
     anchor2_response_array = data['anchor2_response']
     anchor2_request_array = data['anchor2_request']
     anchor3_rtt_array = data['anchor3_rtt']
+    for i in range(len(anchor3_rtt_array)):
+        if anchor3_rtt_array[i] > 21000 or anchor3_rtt_array[i] < 20000:
+            anchor3_rtt_array[i] = anchor3_rtt_array[i-1]
     anchor3_response_array = data['anchor3_response']
     anchor3_request_array = data['anchor3_request']
 
     distance_sample_without_rtt_array = np.array([0]*(sample_length*6+1))
     distance_sample_with_rtt_array = np.array([0]*(sample_length*9+1))
     for i in range(sample_number):
-        k = random.randint(10000,19800)
+        k = random.randint(10000,19700)
         anchor1_rtt_sample = anchor1_rtt_array[k:k+sample_length]
         anchor1_response_sample = anchor1_response_array[k:k+sample_length]
         anchor1_request_sample = anchor1_request_array[k:k+sample_length]
@@ -54,6 +63,7 @@ def generate_test_set(sample_number,sample_length):
     test_set_with_rtt = test_set_with_rtt[1:,:]
     return test_set_without_rtt,test_set_with_rtt
 
-test_set_without_rtt,test_set_with_rtt = generate_test_set(10,50)
-np.save('test_set/test_set_without_rtt_50.npy',test_set_without_rtt)
-np.save('test_set/test_set_with_rtt_50.npy',test_set_with_rtt)
+packet_length = 300
+test_set_without_rtt,test_set_with_rtt = generate_test_set(10,packet_length)
+np.save('test_set/test_set_without_rtt_{}.npy'.format(packet_length),test_set_without_rtt)
+np.save('test_set/test_set_with_rtt_{}.npy'.format(packet_length),test_set_with_rtt)

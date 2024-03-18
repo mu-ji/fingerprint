@@ -6,12 +6,21 @@ distance_list = [i for i in range(11)]
 def distance_sample(distance,sample_number,sample_length):
     data = np.load('fingerprint_experiment1/distance{}.npz'.format(distance))
     anchor1_rtt_array = data['anchor1_rtt']
+    for i in range(len(anchor1_rtt_array)):
+        if anchor1_rtt_array[i] > 21000 or anchor1_rtt_array[i] < 20000:
+            anchor1_rtt_array[i] = anchor1_rtt_array[i-1]
     anchor1_response_array = data['anchor1_response']
     anchor1_request_array = data['anchor1_request']
     anchor2_rtt_array = data['anchor2_rtt']
+    for i in range(len(anchor2_rtt_array)):
+        if anchor2_rtt_array[i] > 21000 or anchor2_rtt_array[i] < 20000:
+            anchor2_rtt_array[i] = anchor2_rtt_array[i-1]
     anchor2_response_array = data['anchor2_response']
     anchor2_request_array = data['anchor2_request']
     anchor3_rtt_array = data['anchor3_rtt']
+    for i in range(len(anchor3_rtt_array)):
+        if anchor3_rtt_array[i] > 21000 or anchor3_rtt_array[i] < 20000:
+            anchor3_rtt_array[i] = anchor3_rtt_array[i-1]
     anchor3_response_array = data['anchor3_response']
     anchor3_request_array = data['anchor3_request']
 
@@ -56,6 +65,7 @@ def generate_training_set(sample_number,sample_length):
     train_set_with_rtt = train_set_with_rtt[1:,:]
     return train_set_without_rtt,train_set_with_rtt
 
-train_set_without_rtt,train_set_with_rtt = generate_training_set(40,300)
-np.save('train_set/train_set_without_rtt_300.npy',train_set_without_rtt)
-np.save('train_set/train_set_with_rtt_300.npy',train_set_with_rtt)
+packet_length = 300
+train_set_without_rtt,train_set_with_rtt = generate_training_set(40,packet_length)
+np.save('train_set/train_set_without_rtt_{}.npy'.format(packet_length),train_set_without_rtt)
+np.save('train_set/train_set_with_rtt_{}.npy'.format(packet_length),train_set_with_rtt)
